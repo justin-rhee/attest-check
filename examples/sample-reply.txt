@@ -1,0 +1,16 @@
+I reviewed the three changes in this batch. Overall they are consistent and I
+found one issue worth noting inline, but nothing that blocks the batch.
+
+Some analysis prose can go here, and it can even mention item ids like A2 in
+passing, that does NOT count as accounting for them. Only the block below does.
+
+VERDICT-PROVENANCE:
+  findings: 1
+  A1 | "return total === expected" | verified, assertion is exact, not truthy
+  A2 | "if (!user) throw Unauthorized" | verified, guard present on the write path
+  A3 | "clampCents(Math.min(cap, req))" | verified, cap applied before spend
+UPHELD
+
+# Try it:
+#   attest-check.sh examples/sample-reply.txt A1 A2 A3    -> ok (exit 0)
+#   attest-check.sh examples/sample-reply.txt A1 A2 A3 A4 -> FAIL, names A4 (exit 1)
