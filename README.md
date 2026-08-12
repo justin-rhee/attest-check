@@ -2,9 +2,21 @@
 
 [![test](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml)
 
-An AI agent will approve a whole batch of changes without reading each one. Mine approved six but had really only looked at two, and all six got logged as done.
+A check that reads an agent's answer and fails it if anything you asked about went unmentioned.
 
-You can't force an agent to read carefully. But you can refuse to accept an answer for anything it never actually named. That's all this does. It reads the agent's reply and fails if the reply doesn't list every item you asked it to check. It's about 60 lines of bash.
+## Why I built it
+
+An agent told me six changes were fine. It had only read two.
+
+The other four were never mentioned in the reply. Not rejected, not questioned, just absent. All six went into my log as approved, because the thing reading that reply was looking at the overall verdict and nobody was watching for the gap.
+
+If you hand an agent a batch of anything and act on what comes back, you have this problem sitting in your harness right now. It doesn't announce itself. The reply was well written and confident about the two it had actually looked at, and nothing in it suggested that four items had quietly fallen out along the way.
+
+## How it works
+
+You can't make an agent read carefully. You can refuse to accept an answer about something it never mentioned.
+
+You give it the reply and the list of items you asked about. It checks that each one is named somewhere in the reply. If any are missing it fails and tells you which.
 
 ```console
 $ attest-check.sh reply.txt A1 A2 A3
@@ -18,41 +30,43 @@ $ echo $?
 1
 ```
 
-Worth being upfront: this can't tell you whether the agent looked *hard*. Nothing can measure that. It catches the one thing you actually can check, which is the agent staying silent about something and that silence getting logged as approval. The full reasoning is in [docs/ADR.md](docs/ADR.md).
+About 60 lines of shell. The reply needs to carry a short list naming each item, and the shape of that list is in [docs/FORMAT.md](docs/FORMAT.md).
 
-## Use it if
+## Install
 
-You have an agent checking several things in one go, code changes, tickets, checklist items, and then acting on each answer. If you build workflows like that, this is the small safety check you don't think you need until a shallow review slips through.
+Nothing to install. One shell script, no dependencies.
 
 ```
 attest-check.sh <reviewer-out-file> <item-id> [<item-id> ...]
 # exit 0  everything was named
-# exit 1  the list is missing, or an item wasn't named (it tells you which)
+# exit 1  the list is missing, or an item wasn't named, and it tells you which
 # exit 64 you called it wrong
 ```
 
-The agent's reply needs to include a short list that names each item; the exact shape is in [docs/FORMAT.md](docs/FORMAT.md). There's a sample file to try it on:
+There's a sample reply to try it against before you wire it into anything:
 
 ```
 src/attest-check.sh examples/sample-reply.txt A1 A2 A3     # passes
 src/attest-check.sh examples/sample-reply.txt A1 A2 A3 A4  # fails, points at A4
 ```
 
+It fits anywhere an agent checks several things in one go and something downstream acts on each answer.
+
 ## What it won't do
 
-- It won't tell you if the review was any good. An agent can name every item and still have barely looked. This catches the silent miss, not a review that named everything but looked at none of it. How carefully it looked is a separate, harder thing to measure.
-- It doesn't read the contents of your list, only checks that each name shows up. How you write each line is up to you.
-- It's one small check you drop into your own setup, not a product on its own.
+- It won't tell you whether the review was any good. An agent can name all six items and still have barely looked at them. This catches the silent miss, which is the failure I actually hit, not shallow reading, which nothing can measure from the outside.
+- It doesn't read what you wrote about each item, only that each one is named. What goes in each line is yours.
+- It's a small check you drop into your own harness, not a product on its own.
 
 ## How I tested it
 
-You can run the test suite offline, no accounts or keys needed:
+The suite runs offline, no accounts or keys:
 
 ```
-bash tests/test-attest-check.sh    # 22 checks
+bash tests/test-attest-check.sh
 ```
 
-It covers the ways a shallow review can slip through, plus two bugs I hit and fixed while writing it, both the kind that only show up on very large replies. The tests keep them from coming back. Details are in [docs/ADR.md](docs/ADR.md).
+22 cases. They cover the ways a shallow review slips through, plus two bugs I hit while writing it, both of which only appeared on very large replies. Those tests exist so the bugs cannot come back. The reasoning is in [docs/ADR.md](docs/ADR.md).
 
 ## License
 
