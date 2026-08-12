@@ -1,5 +1,7 @@
 # attest-check
 
+[![test](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml)
+
 An AI agent will approve a whole batch of changes without reading each one. Mine approved six but had really only looked at two, and all six got logged as done.
 
 You can't force an agent to read carefully. But you can refuse to accept an answer for anything it never actually named. That's all this does. It reads the agent's reply and fails if the reply doesn't list every item you asked it to check. It's about 60 lines of bash.
