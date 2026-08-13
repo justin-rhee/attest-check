@@ -28,8 +28,8 @@ An item id (the ids you pass on the command line) must appear inside the block a
 a whole word. Matching is literal and word-bounded:
 
 - literal: an id like `A.` or `A[7]` matches only that exact text, never as a
-  regex;
-- word-bounded: `A1` does **not** satisfy `A10` and vice versa.
+  regex
+- word-bounded: `A1` does **not** satisfy `A10` and vice versa
 
 The internal shape of each line is up to you, `attest-check` does not parse it.
 A common, readable convention is one line per item:
