@@ -54,9 +54,11 @@ It fits anywhere an agent checks several things in one go and something downstre
 
 ## What it won't do
 
-- It won't tell you whether the review was any good. An agent can name all six items and still have barely looked at them. This catches the silent miss, which is the failure I actually hit, not shallow reading, which nothing can measure from the outside.
-- It doesn't read what you wrote about each item, only that each one is named. What goes in each line is yours.
-- It's a small check you drop into your own harness, not a product on its own.
+It won't tell you whether the review was any good. An agent can name all six items and still have barely looked at them. This catches the silent miss, which is the failure I actually hit, not shallow reading, which nothing can measure from the outside.
+
+It doesn't read what you wrote about each item, only that each one is named. What goes in each line is yours.
+
+It's a small check you drop into your own harness, not a product on its own.
 
 ## How I tested it
 
