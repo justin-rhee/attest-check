@@ -2,19 +2,17 @@
 
 [![test](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml)
 
-A check that reads an agent's answer and fails it if anything you asked about went unmentioned.
+Six changes, all approved, logged as done. The agent had actually read two of them, and nothing in a confident reply announces the four it quietly dropped.
 
-## Why I built it
+attest-check reads the answer and fails it if anything you asked about went unmentioned.
 
-An agent told me six changes were fine. It had only read two.
+## Use it if
 
-The other four were never mentioned in the reply. Not rejected, not questioned, just absent. All six went into my log as approved, because the thing reading that reply was looking at the overall verdict and nobody was watching for the gap.
-
-If you hand an agent a batch of anything and act on what comes back, you have this problem sitting in your harness right now. It doesn't announce itself. The reply was well written and confident about the two it had actually looked at, and nothing in it suggested that four items had quietly fallen out along the way.
+You have an agent checking several things in one go, code changes, tickets, checklist items, and then acting on each answer. If you build workflows like that, this is the small safety check you don't think you need until a shallow review slips through.
 
 ## How it works
 
-You can't make an agent read carefully. You can refuse to accept an answer about something it never mentioned.
+You can't make an agent read carefully, but you can refuse to accept an answer about something it never mentioned.
 
 You give it the reply and the list of items you asked about. It checks that each one is named somewhere in the reply. If any are missing it fails and tells you which.
 
@@ -76,4 +74,4 @@ MIT. See [LICENSE](LICENSE). No warranty. Security notes and how to report a pro
 
 ---
 
-One of a set of small tools I've pulled out of a bigger system I run, where agents write the code and plain scripts decide when it's actually done. They all share one rule: the machine suggests, a person decides, and nothing quietly goes wrong behind your back. More of them on my [GitHub profile](https://github.com/justin-rhee).
+One of a set of small tools I've pulled out of a bigger system I run, where agents write the code and plain scripts decide when it's actually done. I keep the final call for myself, and I'd rather a check be annoying than silent. More of them on my [GitHub profile](https://github.com/justin-rhee).
