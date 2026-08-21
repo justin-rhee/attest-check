@@ -52,11 +52,12 @@ It fits anywhere an agent checks several things in one go and something downstre
 
 ## What it won't do
 
-It won't tell you whether the review was any good. An agent can name all six items and still have barely looked at them. This catches the silent miss, which is the failure I actually hit, not shallow reading, which nothing can measure from the outside.
-
-It doesn't read what you wrote about each item, only that each one is named. What goes in each line is yours.
-
-It's a small check you drop into your own harness, not a product on its own.
+- tell you whether the review was any good, since an agent can name all six items and
+  still have barely looked at them
+- measure shallow reading, which nothing can judge from the outside, only the silent
+  miss that I actually hit
+- read what you wrote about each item, only check that every one is named
+- work as a product on its own, since it's a small check you drop into your own harness
 
 ## How I tested it
 
@@ -74,4 +75,4 @@ MIT. See [LICENSE](LICENSE). No warranty. Security notes and how to report a pro
 
 ---
 
-This little tool is one of a handful I pulled out of my own day-to-day agent setup. I use them all myself, so when something breaks I usually notice fast. But if you spot something weird, or just want to ask how it works, open an issue. I read every one. More tools on my [GitHub profile](https://github.com/justin-rhee).
+This little tool is one of a handful I pulled out of my own day-to-day agent setup. I use them all myself, so when something breaks I usually notice fast. But if you run into any issues, or anything that looks off, open an issue. I read every one. More tools on my [GitHub profile](https://github.com/justin-rhee).
