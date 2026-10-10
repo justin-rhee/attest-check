@@ -2,17 +2,17 @@
 
 [![test](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml)
 
-Six changes, all approved, logged as done. The agent had actually read two of them, and nothing in a confident reply announces the four it quietly dropped.
+One small shell check for batch agent reviews: **account for every item you asked about**, **fail with the unaccounted ids named**, and **stop the verdict before an unaccounted item gets recorded as done**. About 60 lines of shell, no dependencies, nothing to install.
 
-attest-check reads the answer and fails it if anything you asked about went unmentioned.
+It exists because six changes were once approved and logged as done when the agent had actually read two of them, and nothing in a confident reply announced the four it quietly dropped. You can't make an agent read carefully, but you can refuse to accept an answer about something it never mentioned. This is that refusal.
 
 ## Use it if
 
-You have an agent checking several things in one go, code changes, tickets, checklist items, and then acting on each answer. If you build workflows like that, this is the small safety check you don't think you need until a shallow review slips through.
+- an agent checks several things in one go, code changes, tickets, checklist items, and something downstream acts on each answer
+- a shallow review has to be caught before the verdict is recorded
+- you want the silent miss named by id, not found by hand
 
 ## How it works
-
-You can't make an agent read carefully, but you can refuse to accept an answer about something it never mentioned.
 
 You give it the reply and the list of items you asked about. It checks that each one is named somewhere in the reply. If any are missing it fails and tells you which.
 
@@ -28,11 +28,17 @@ $ echo $?
 1
 ```
 
-About 60 lines of shell. The reply needs to carry a short list naming each item, and the shape of that list is in [docs/FORMAT.md](docs/FORMAT.md).
+The reply needs to carry a short list naming each item, and the shape of that list is in [docs/FORMAT.md](docs/FORMAT.md).
 
 ## Install
 
-Nothing to install. One shell script, no dependencies.
+Nothing to install. One shell script, no dependencies. There's a sample reply to try it against before you wire it into anything:
+
+```sh
+git clone https://github.com/justin-rhee/attest-check
+bash src/attest-check.sh examples/sample-reply.txt A1 A2 A3     # passes
+bash src/attest-check.sh examples/sample-reply.txt A1 A2 A3 A4  # fails, points at A4
+```
 
 ```
 attest-check.sh <reviewer-out-file> <item-id> [<item-id> ...]
@@ -41,21 +47,16 @@ attest-check.sh <reviewer-out-file> <item-id> [<item-id> ...]
 # exit 64 you called it wrong
 ```
 
-There's a sample reply to try it against before you wire it into anything:
+Verify it took effect rather than assuming: the second sample call above must fail and name A4 before you point it at a real reviewer.
 
-```
-src/attest-check.sh examples/sample-reply.txt A1 A2 A3     # passes
-src/attest-check.sh examples/sample-reply.txt A1 A2 A3 A4  # fails, points at A4
-```
+## Platforms
 
-It fits anywhere an agent checks several things in one go and something downstream acts on each answer.
+macOS and Linux today. Windows on the way.
 
 ## What it won't do
 
-- tell you whether the review was any good, since an agent can name all six items and
-  still have barely looked at them
-- measure shallow reading, which nothing can judge from the outside, only the silent
-  miss that I actually hit
+- tell you whether the review was any good, since an agent can name all six items and still have barely looked at them
+- measure shallow reading, which nothing can judge from the outside, only the silent miss that I actually hit
 - read what you wrote about each item, only check that every one is named
 - work as a product on its own, since it's a small check you drop into your own harness
 
@@ -63,7 +64,7 @@ It fits anywhere an agent checks several things in one go and something downstre
 
 The suite runs offline, no accounts or keys:
 
-```
+```sh
 bash tests/test-attest-check.sh
 ```
 
@@ -72,7 +73,5 @@ bash tests/test-attest-check.sh
 ## License
 
 MIT. See [LICENSE](LICENSE). No warranty. Security notes and how to report a problem: [SECURITY.md](SECURITY.md).
-
----
 
 This little tool is one of a handful I pulled out of my own day-to-day agent setup. I use them all myself, so when something breaks I usually notice fast. But if you run into any issues, or anything that looks off, open an issue. I read every one. More tools on my [GitHub profile](https://github.com/justin-rhee).
