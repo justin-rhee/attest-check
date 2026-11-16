@@ -1,20 +1,8 @@
 # attest-check
 
-[![test](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml)
+[![tests](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/attest-check/actions/workflows/test.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) ![shell](https://img.shields.io/badge/shell-bash-blue.svg) ![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 
-One small shell check for batch agent reviews: **account for every item you asked about**, **fail with the unaccounted ids named**, and **stop the verdict before an unaccounted item gets recorded as done**. About 60 lines of shell, no dependencies, nothing to install.
-
-It exists because six changes were once approved and logged as done when the agent had actually read two of them, and nothing in a confident reply announced the four it quietly dropped. You can't make an agent read carefully, but you can refuse to accept an answer about something it never mentioned. This is that refusal.
-
-## Use it if
-
-- an agent checks several things in one go, code changes, tickets, checklist items, and something downstream acts on each answer
-- a shallow review has to be caught before the verdict is recorded
-- you want the silent miss named by id, not found by hand
-
-## How it works
-
-You give it the reply and the list of items you asked about. It checks that each one is named somewhere in the reply. If any are missing it fails and tells you which.
+Rejects an agent's review when it skipped any of the items you asked it to check, and names the ones it left out.
 
 ```console
 $ attest-check.sh reply.txt A1 A2 A3
@@ -28,50 +16,54 @@ $ echo $?
 1
 ```
 
-The reply needs to carry a short list naming each item, and the shape of that list is in [docs/FORMAT.md](docs/FORMAT.md).
+Six changes were once approved and logged as done when the agent had read two of them, and nothing in its confident reply mentioned the four it dropped. You can't make an agent read carefully, but you can refuse an answer about something it never mentioned.
+
+## Use it if
+
+- an agent checks several things in one go, and something downstream acts on each answer
+- a shallow review has to be caught before the verdict is recorded
+- you want the silent miss named by id, not found by hand
 
 ## Install
 
-Nothing to install. One shell script, no dependencies. There's a sample reply to try it against before you wire it into anything:
+One shell script, nothing to install. Try it on the sample reply first:
 
 ```sh
 git clone https://github.com/justin-rhee/attest-check
-bash src/attest-check.sh examples/sample-reply.txt A1 A2 A3     # passes
-bash src/attest-check.sh examples/sample-reply.txt A1 A2 A3 A4  # fails, points at A4
+cd attest-check
+bash src/attest-check.sh examples/sample-reply.txt A1 A2 A3      # passes
+bash src/attest-check.sh examples/sample-reply.txt A1 A2 A3 A4   # fails, names A4
 ```
 
-```
-attest-check.sh <reviewer-out-file> <item-id> [<item-id> ...]
-# exit 0  everything was named
-# exit 1  the list is missing, or an item wasn't named, and it tells you which
-# exit 64 you called it wrong
-```
+Exit 0 means every item was named, 1 means the list is missing or an item wasn't named, and 64 means it was called wrong.
 
-Verify it took effect rather than assuming: the second sample call above must fail and name A4 before you point it at a real reviewer.
+## How it works
 
-## Platforms
-
-macOS and Linux today. Windows on the way.
+You give it the reply and the ids you asked about. The reply carries a short list naming each item, in the shape described in [docs/FORMAT.md](docs/FORMAT.md). Any id missing from that list fails the check, by name.
 
 ## What it won't do
 
-- tell you whether the review was any good, since an agent can name all six items and still have barely looked at them
-- measure shallow reading, which nothing can judge from the outside, only the silent miss that I actually hit
-- read what you wrote about each item, only check that every one is named
+- tell you whether the review was any good, since an agent can name all six items and barely look at them
+- measure shallow reading, which nothing can judge from outside, only the silent miss I hit
+- read what was written about each item, only check that each one is named
 - work as a product on its own, since it's a small check you drop into your own harness
+- run on Windows yet
 
 ## How I tested it
 
-The suite runs offline, no accounts or keys:
-
-```sh
-bash tests/test-attest-check.sh
-```
-
-22 cases. They cover the ways a shallow review slips through, plus two bugs I hit while writing it, both of which only appeared on very large replies. Those tests exist so the bugs cannot come back. The reasoning is in [docs/ADR.md](docs/ADR.md).
+- 22 offline cases: `bash tests/test-attest-check.sh`
+- covers the ways a shallow review slips through, plus two bugs that only showed up on very large replies
+- CI runs them on macOS and Ubuntu; the reasoning is in [docs/ADR.md](docs/ADR.md)
 
 ## License
 
 MIT. See [LICENSE](LICENSE). No warranty. Security notes and how to report a problem: [SECURITY.md](SECURITY.md).
 
-This little tool is one of a handful I pulled out of my own day-to-day agent setup. I use them all myself, so when something breaks I usually notice fast. But if you run into any issues, or anything that looks off, open an issue. I read every one. More tools on my [GitHub profile](https://github.com/justin-rhee).
+<!-- related:start -->
+## Related
+
+- [anchor-check](https://github.com/justin-rhee/anchor-check): catches plans that cite files that don't exist
+- [judgment-check](https://github.com/justin-rhee/judgment-check): has agents commit to a prediction first, then a different agent scores it
+
+Part of a small set of tools I pulled out of my own agent harness. I use them myself and read every issue. More on my [GitHub profile](https://github.com/justin-rhee).
+<!-- related:end -->
